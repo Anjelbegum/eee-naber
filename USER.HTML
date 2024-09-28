@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Clone - Profil</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="navbar">
+        <h1>Hoş Geldin, Kullanıcı!</h1>
+        <p>Profil sayfan burası. Fotoğraf paylaş ve diğer kullanıcılarla etkileşime geç.</p>
+    </div>
+
+    <!-- Fotoğraf Yükleme Kısmı -->
+    <div class="upload-section">
+        <input id="file-upload" type="file" style="display: none;" onchange="showFileName()">
+        <label for="file-upload" class="custom-file-upload">Dosya Seç</label>
+        <span id="file-name">Hiç dosya seçilmedi</span>
+        <input id="post-description" type="text" placeholder="Gönderi açıklaması...">
+        <button class="upload-button" onclick="uploadPhoto()">Fotoğraf Yükle</button>
+    </div>
+
+    <!-- Gönderiler Bölümü -->
+    <div class="feed-section">
+        <h2>Gönderilerin:</h2>
+        <div id="posts"></div>
+    </div>
+
+    <script>
+        const postsArray = []; // Gönderileri tutacak dizi
+
+        function showFileName() {
+            const fileInput = document.getElementById('file-upload');
+            const fileNameDisplay = document.getElementById('file-name');
+
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = fileInput.files[0].name;
+            } else {
+                fileNameDisplay.textContent = 'Hiç dosya seçilmedi';
+            }
+        }
+
+        function uploadPhoto() {
+            const fileInput = document.getElementById('file-upload');
+            const postsDiv = document.getElementById('posts');
+            const descriptionInput = document.getElementById('post-description');
+            const descriptionText = descriptionInput.value;
+
+            if (fileInput.files.length > 0 && descriptionText) {
+                const file = fileInput.files[0];
+                const imgElement = document.createElement('img');
+                imgElement.src = URL.createObjectURL(file);
+                imgElement.className = 'post-img';
+                
+                const postElement = document.createElement('div');
+                postElement.className = 'post';
+                postElement.innerHTML = `
+                    <p>${descriptionText}</p>
+                    <div class="image-container">${imgElement.outerHTML}</div>
+                `;
+                
+                postsDiv.prepend(postElement);
+                postsArray.unshift({description: descriptionText, img: imgElement.src}); // Gönderiyi diziye ekle
+
+                // Seçilen dosyayı ve açıklamayı temizle
+                fileInput.value = '';
+                descriptionInput.value = '';
+                document.getElementById('file-name').textContent = 'Hiç dosya seçilmedi';
+            } else {
+                alert('Lütfen bir dosya seçin ve bir açıklama yazın.');
+            }
+        }
+    </script>
+</body>
+</html>

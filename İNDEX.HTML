@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Benzeri Uygulama - Giriş/Kayıt</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        header {
+            background-color: #fff;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        h1 {
+            margin: 0;
+        }
+        .form-container {
+            margin: 50px auto;
+            width: 300px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .form-container input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #218838;
+        }
+        .switch-link {
+            display: block;
+            margin-top: 10px;
+            text-align: center;
+            color: blue;
+            cursor: pointer;
+        }
+        .post-container {
+            margin: 20px auto;
+            width: 500px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .post-container h2 {
+            margin: 0 0 10px 0;
+        }
+        .post-container img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        #createPostForm {
+            display: none;
+            margin-top: 20px;
+        }
+        #createPostForm textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+        }
+        #createPostForm input[type="file"] {
+            margin-bottom: 10px;
+        }
+        .top-right {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .create-post-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .create-post-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Instagram Benzeri Uygulama</h1>
+    <div class="top-right" id="createPostButtonContainer" style="display: none;">
+        <button class="create-post-btn" onclick="toggleCreatePostForm()">Gönderi Oluştur</button>
+    </div>
+</header>
+
+<main>
+    <!-- Giriş Yap Formu -->
+    <div id="loginForm" class="form-container">
+        <h2>Giriş Yap</h2>
+        <input type="email" id="loginEmail" placeholder="E-posta" required>
+        <input type="password" id="loginPassword" placeholder="Şifre" required>
+        <button onclick="login()">Giriş Yap</button>
+        <span class="switch-link" onclick="showRegisterForm()">Kayıt Ol</span>
+    </div>
+
+    <!-- Kayıt Ol Formu -->
+    <div id="registerForm" class="form-container" style="display:none;">
+        <h2>Kayıt Ol</h2>
+        <input type="email" id="registerEmail" placeholder="E-posta" required>
+        <input type="password" id="registerPassword" placeholder="Şifre" required>
+        <button onclick="register()">Kayıt Ol</button>
+        <span class="switch-link" onclick="showLoginForm()">Giriş Yap</span>
+    </div>
+
+    <!-- Gönderi Oluşturma Formu -->
+    <div id="createPostForm" class="form-container">
+        <h2>Yeni Gönderi</h2>
+        <textarea id="postDescription" rows="4" placeholder="Gönderi açıklamasını yazın"></textarea>
+        <input type="file" id="postImage" accept="image/*">
+        <button onclick="createPost()">Gönderi Paylaş</button>
+    </div>
+
+    <div id="postContainer" class="post-container" style="display: none;">
+        <h2>Gönderiler</h2>
+        <div id="posts"></div>
+    </div>
+</main>
+
+<script>
+    let users = [];
+    let posts = [];
+
+    function register() {
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+
+        if (email && password) {
+            users.push({ email, password });
+            alert('Kayıt başarılı! Şimdi giriş yapabilirsiniz.');
+            showLoginForm();
+        } else {
+            alert('Lütfen tüm alanları doldurun.');
+        }
+    }
+
+    function login() {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+
+        const user = users.find(user => user.email === email && user.password === password);
+
+        if (user) {
+            alert('Giriş başarılı!');
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('postContainer').style.display = 'block';
+            document.getElementById('createPostButtonContainer').style.display = 'block';
+        } else {
+            alert('E-posta veya şifre hatalı!');
+        }
+    }
+
+    function showRegisterForm() {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('registerForm').style.display = 'block';
+    }
+
+    function showLoginForm() {
+        document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('loginForm').style.display = 'block';
+    }
+
+    function toggleCreatePostForm() {
+        const form = document.getElementById('createPostForm');
+        if (form.style.display === 'none' || form.style.display === '') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    }
+
+    function createPost() {
+        const description = document.getElementById('postDescription').value;
+        const imageInput = document.getElementById('postImage');
+        const imageFile = imageInput.files[0];
+
+        if (description && imageFile) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageUrl = e.target.result;
+
+                posts.push({ description, imageUrl });
+                displayPosts();
+            };
+            reader.readAsDataURL(imageFile);
+
+            document.getElementById('createPostForm').reset();
+            toggleCreatePostForm();
+        } else {
+            alert('Lütfen bir açıklama ve fotoğraf ekleyin.');
+        }
+    }
+
+    function displayPosts() {
+        const postsContainer = document.getElementById('posts');
+        postsContainer.innerHTML = '';
+
+        posts.forEach(post => {
+            const postElement = document.createElement('div');
+            postElement.classList.add('post');
+            postElement.innerHTML = `
+                <img src="${post.imageUrl}" alt="Gönderi Resmi">
+                <p>${post.description}</p>
+            `;
+            postsContainer.appendChild(postElement);
+        });
+    }
+</script>
+
+</body>
+</html>
